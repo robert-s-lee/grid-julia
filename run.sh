@@ -9,7 +9,7 @@ if [ "$#" == "0" ]; then
   exit 1
 fi
 
-# Grid.ai put the last as the script name and the next to last as the --of the script
+# Grid.ai puts the last as the script name and the next to last as the --of the script
 script="${@: -1}"
 # remove the last two
 set -- "${@:1:$(($#-2))}"
