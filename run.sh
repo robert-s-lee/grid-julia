@@ -4,6 +4,11 @@
 echo "Arguments"
 echo "$@"
 
+if [ "$#" == "0" ]; then
+  echo "the first argement must be a script name"
+  exit 1
+fi
+
 # pop the first argment as the scripe name
 script="$1"
 shift
