@@ -1,5 +1,5 @@
 
-name: "cluster create simple"
+name: "julia dockerfile grid search"
 
 on:
   workflow_dispatch:
@@ -10,12 +10,16 @@ on:
         description: Run name
       grid-args:
         required: true
-        default: --framework julia --instance-types g4dn.xlarge,t2.medium
+        default: --framework julia --dockerfile julia.dockerfile --instance_type t2.medium
         description: Arguments to `grid run`
       script-args:
         required: false
-        default: 
+        default: --arg1 "[1,2,3]"
         description: Arguments to `grid run script`
+      script-name:
+        required: true
+        default: julia.jl
+        description: Script
       grid-url:
         required: false
         default: 
@@ -42,7 +46,7 @@ jobs:
           gridai-key: ${{ secrets.GRIDAI_KEY }}
       - id: gridai-github
         run: |
-          gridai.py create_run julia.jl --grid_args " ${{ github.event.inputs.grid-args }}" --script_args " ${{ github.event.inputs.script-args }}" --gha True
+          gridai.py create_run ${{ github.event.inputs.script-name }} --grid_args " ${{ github.event.inputs.grid-args }}" --script_args " ${{ github.event.inputs.script-args }}" --gha True
         shell: bash
 
       - id: gridai-github-assert

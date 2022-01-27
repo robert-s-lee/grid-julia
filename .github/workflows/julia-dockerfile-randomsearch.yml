@@ -1,0 +1,57 @@
+
+name: "julia dockerfile random search"
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        required: true
+        default: julia-$(date '+%y%m%d-%H%M%S')
+        description: Run name
+      grid-args:
+        required: true
+        default: --framework julia --dockerfile julia.dockerfile --instance_type t2.medium --strategy random_search --num_trials 2
+        description: Arguments to `grid run`
+      script-args:
+        required: false
+        default: --arg1 "[1,2,3]"
+        description: Arguments to `grid run script`
+      script-name:
+        required: true
+        default: julia.jl
+        description: Script
+      grid-url:
+        required: false
+        default: 
+        description: set GRID_URL 
+      python-version:  
+        required: true
+        default: 3.8
+        description: set python version 
+      python-venv:
+        required: false
+        default: venv
+        description: use python venv or not
+jobs:
+  gridai-byoc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: gridai-actions/gridai-login@v0
+        with:
+          python-version: ${{ github.event.inputs.python-version }}
+          python-venv: ${{ github.event.inputs.python-venv }}
+          grid-url: ${{ github.event.inputs.grid-url }}
+          gridai-username: ${{ secrets.GRIDAI_USERNAME }} 
+          gridai-key: ${{ secrets.GRIDAI_KEY }}
+      - id: gridai-github
+        run: |
+          gridai.py create_run ${{ github.event.inputs.script-name }} --grid_args " ${{ github.event.inputs.grid-args }}" --script_args " ${{ github.event.inputs.script-args }}" --gha True
+        shell: bash
+
+      - id: gridai-github-assert
+        run: |
+          if [ "${{ steps.gridai-github.outputs.match-status }}" != 'succeeded' ]; then
+            exit 1
+          fi
+      
