@@ -18,7 +18,7 @@ on:
         description: Arguments to `grid run script`
       script-name:
         required: true
-        default: julia.jl
+        default: hello.jl
         description: Script        
       grid-url:
         required: false
