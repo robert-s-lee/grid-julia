@@ -39,7 +39,9 @@ Hello World
 ```
 - Use Dockerfile with Julia 1.7
 
+```
 grid run --dockerfile julia.dockerfile --name julia-$(date '+%m%d-%H%M%S') --framework julia hello.jl
+```
 
 - Burst to Cloud on Grid.ai with Random Search [ WILL FAIL NOW.  FILED BUG REPORT ]
 
