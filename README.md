@@ -37,6 +37,9 @@ julia --project --threads auto -O1 hello.jl --arg1 3
 2022-01-25T15:55:54-05:00
 Hello World
 ```
+- Use Dockerfile with Julia 1.7
+
+grid run --dockerfile julia.dockerfile --name julia-$(date '+%m%d-%H%M%S') --framework julia hello.jl
 
 - Burst to Cloud on Grid.ai with Random Search [ WILL FAIL NOW.  FILED BUG REPORT ]
 
