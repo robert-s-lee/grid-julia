@@ -20,18 +20,14 @@ on:
         required: true
         default: hello.jl
         description: Script        
+      success-status:
+        required: true
+        default: succeeded
+        description: Script   
       grid-url:
         required: false
         default: 
         description: set GRID_URL 
-      python-version:  
-        required: true
-        default: 3.8
-        description: set python version 
-      python-venv:
-        required: false
-        default: venv
-        description: use python venv or not
 jobs:
   gridai-byoc:
     runs-on: ubuntu-latest
@@ -51,7 +47,7 @@ jobs:
 
       - id: gridai-github-assert
         run: |
-          if [ "${{ steps.gridai-github.outputs.match-status }}" != 'succeeded' ]; then
+          if [ "${{ steps.gridai-github.outputs.match-status }}" != "${{ github.event.inputs.success-status }}" ]; then
             exit 1
           fi
       
