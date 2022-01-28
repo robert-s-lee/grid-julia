@@ -1,5 +1,5 @@
 # test locally for syntax error by running
-# `docker build -t gridray:latest -f gridray.dockerfile .`
+# docker build -t gridjulia:latest -f julia.dockerfile .
 
 FROM julia:1.7
 
