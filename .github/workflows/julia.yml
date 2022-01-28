@@ -42,7 +42,7 @@ jobs:
           gridai-key: ${{ secrets.GRIDAI_KEY }}
       - id: gridai-github
         run: |
-          gridai.py create_run ${{ github.event.inputs.script-name }} --grid_args " ${{ github.event.inputs.grid-args }}" --script_args " ${{ github.event.inputs.script-args }}" --gha True
+          gridai.py create_run ${{ github.event.inputs.script-name }} --grid_args " ${{ github.event.inputs.grid-args }}" --script_args " ${{ github.event.inputs.script-args }}" --status3 "${{ github.event.inputs.success-status }}" --gha True
         shell: bash
 
       - id: gridai-github-assert
