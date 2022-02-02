@@ -42,7 +42,7 @@ jobs:
           gridai-key: ${{ secrets.GRIDAI_KEY }}
       - id: gridai-github
         run: |
-          gridai.py create_run ${{ github.event.inputs.script-name }} --grid_args " ${{ github.event.inputs.grid-args }}" --script_args " ${{ github.event.inputs.script-args }}" --status3 "${{ github.event.inputs.success-status }}" --gha True
+          gridai.py cmd  ${{ github.event.inputs.script-name }} --grid_args " ${{ github.event.inputs.grid-args }}" --script_args " ${{ github.event.inputs.script-args }}" --status3 "${{ github.event.inputs.success-status }}" --gha True
         shell: bash
 
       - id: gridai-github-assert
@@ -50,4 +50,16 @@ jobs:
           if [ "${{ steps.gridai-github.outputs.match-status }}" != "${{ github.event.inputs.success-status }}" ]; then
             exit 1
           fi
+    - id: gridai-obj-create
+      run: |          
+        gridai.py cli "grid run ${{ github.event.inputs.grid-args }} ${{ github.event.inputs.script-name }} ${{ github.event.inputs.grid-args }}--gha True"
+      shell: bash
+    - id: gridai-obj-status
+      run: |
+        gridai.py status_clus "${steps.gridai-github.outputs.obj-id}"  --status3 "${{ github.event.inputs.success-status }}" --gha 
+      shell: bash
+    - run: |
+          if [ "${{ steps.gridai-github.outputs.match-status }}" != "${{ github.event.inputs.success-status }}" ]; then
+          exit 1
+        fi                  
       
