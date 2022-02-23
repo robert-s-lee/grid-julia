@@ -1,6 +1,3 @@
-using Pkg
-Pkg.add("ArgParse")
-
 using ArgParse
 
 function parse_commandline()
