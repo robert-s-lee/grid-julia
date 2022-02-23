@@ -1,0 +1,78 @@
+FROM ubuntu:18.04
+
+# https://julialang.org/juliareleases.asc
+# Julia (Binary signing key) <buildbot@julialang.org>
+ENV JULIA_GPG 3673DF529D9049477F76B37566E3C7DC03D6E495
+
+# https://julialang.org/downloads/
+ENV JULIA_VERSION 1.6.5
+ENV JULIA_CHECKSUM b8fe23ee547254a2fe14be587284ed77c78c06c2d8e9aad5febce0d21cab8e2c
+
+ENV JULIA_PATH /usr/local/julia
+ARG CONDA_DIR=/opt/conda
+ENV PATH $JULIA_PATH/bin:$CONDA_DIR/bin:$PATH
+
+# Installs system dependencies
+RUN set -eux; \
+    apt-get update && \
+    DEBIAN_FRONTEND="noninteractive" apt-get install -yq --no-install-recommends \
+        build-essential \
+        bzip2 \
+        ca-certificates \
+        cmake \
+        git \
+        unzip \
+        graphviz \
+        libgtk2.0-dev \
+        pkg-config \
+        libavcodec-dev \
+        libavformat-dev \
+        libswscale-dev \
+        curl \
+		wget \
+		libxt6 \
+		libxrender1 \
+		libxext6 \
+		libgl1-mesa-glx \
+		libqt5widgets5 \
+		&& \
+    rm -rf /var/lib/apt/lists/* ;
+
+# https://julialang.org/downloads/#julia-command-line-version
+# https://julialang-s3.julialang.org/bin/checksums/julia-1.6.5.sha256
+# this "case" statement is generated via "update.sh"
+RUN set -eux; \
+	folder="$(echo "$JULIA_VERSION" | cut -d. -f1-2)"; \
+	curl -fL -o julia.tar.gz "https://julialang-s3.julialang.org/bin/linux/x64/${folder}/julia-${JULIA_VERSION}-linux-x86_64.tar.gz"; \
+	\
+	echo "${JULIA_CHECKSUM} *julia.tar.gz" | sha256sum -c -; \
+	\
+	mkdir "$JULIA_PATH"; \
+	tar -xzf julia.tar.gz -C "$JULIA_PATH" --strip-components 1; \
+	rm julia.tar.gz; \
+	\
+# smoke test \
+    res="$(julia --version  | grep -i $JULIA_VERSION)"; \
+    if [ -n "$res" ] ; \
+        then \
+          echo "Julia version v$JULIA_VERSION build successful"; \
+        else \
+          echo "Error: Julia version v$JULIA_VERSION build not equal to output of julia --version command $res" 1>&2; \
+          exit 64; \
+    fi
+
+
+#   install conda
+RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py38_4.9.2-Linux-x86_64.sh -O /tmp/miniconda.sh && \
+    echo 'export PATH=$CONDA_DIR/bin:$PATH' > /etc/profile.d/conda.sh && \
+    /bin/bash /tmp/miniconda.sh -b -p $CONDA_DIR && \
+    rm /tmp/miniconda.sh
+
+RUN conda config --prepend channels conda-forge
+
+# mandatory for Grid.ai
+WORKDIR /gridai/project
+COPY . .
+
+# add packages
+RUN if [ -f requirements.jl ]; then julia requirements.jl; fi

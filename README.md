@@ -43,6 +43,11 @@ Hello World
 grid run --dockerfile julia.dockerfile --name julia-$(date '+%m%d-%H%M%S') --framework julia hello.jl
 ```
 
+- Auto run requirements.jl
+```
+grid run --localdir --framework julia --dockerfile grid-images__cpu-ubuntu18.04-py3.8-julia1.6.5.txt hello.jl
+```
+
 - Burst to Cloud on Grid.ai with Random Search [ WILL FAIL NOW.  FILED BUG REPORT ]
 
   - per `grid run --help` random search require these two parameters to be set
