@@ -45,7 +45,7 @@ grid run --dockerfile julia.dockerfile --name julia-$(date '+%m%d-%H%M%S') --fra
 
 - Auto run requirements.jl
 ```
-grid run --localdir --framework julia --dockerfile grid-images__cpu-ubuntu18.04-py3.8-julia1.6.5.txt hello.jl
+grid run --localdir --framework julia --dockerfile grid-images__cpu-ubuntu18.04-py3.8-julia1.6.5.txt hello2.jl
 ```
 
 - Burst to Cloud on Grid.ai with Random Search [ WILL FAIL NOW.  FILED BUG REPORT ]
